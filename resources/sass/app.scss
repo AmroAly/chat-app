@@ -1,0 +1,63 @@
+
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+// @import '~bootstrap/scss/bootstrap';
+
+// .navbar-laravel {
+//   background-color: #fff;
+//   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+// }
+
+nav {
+  padding: 1.6rem 0;
+}
+
+.my-container {
+  margin: 0 auto;
+}
+
+.main {
+  // background-color: red;
+  min-height: 80vh;
+  padding-bottom: 50px;
+}
+
+.login,
+.register,
+.dashboard,
+.home {
+  padding-top: 50px;
+}
+
+ul#users-list {
+  max-height: 80vh;
+  overflow-y: visible;
+  overflow-x: hidden;
+  min-height: 70vh;
+}
+
+#conversation {
+  min-height: 400px;
+  max-height: 400px;
+  overflow-y: visible;
+  overflow-x: hidden;
+}
+
+.owner {
+  margin-left: auto;
+  text-align: right;
+  background-color: teal;
+  color: white;
+}
+
+.owner:after,
+.not-owner:after {
+  content: "";
+  display: block;
+  clear: both;
+}
