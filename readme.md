@@ -63,3 +63,9 @@ We will run the socket server in order to listen to the messages sent from Redis
 ```
     node node/server.js
 ```
+
+And last but not least let's run the server on localhost:8000
+
+```
+    php artisan serve
+```
