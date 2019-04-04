@@ -2200,7 +2200,6 @@ __webpack_require__.r(__webpack_exports__);
           'client': v.user_id,
           'conversation': v.conv_id
         });
-        console.log(v.user_id, v.conv_id);
         v.scrollToBottom();
       }).catch(function (err) {
         return console.log(err);
@@ -2208,7 +2207,6 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     socket.on('message', function (e) {
-      console.log(e);
       v.createMessageElem(e.msg, false);
       v.scrollToBottom();
     });

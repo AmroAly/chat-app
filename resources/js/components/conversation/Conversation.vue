@@ -34,14 +34,12 @@
                     this.conv_id = res.data.conv_id
                     
                     socket.emit('add user', {'client': v.user_id, 'conversation': v.conv_id});
-                    console.log(v.user_id, v.conv_id)
                     v.scrollToBottom()
                 })
                 .catch(err => console.log(err))
             }
             
             socket.on('message', function(e) {
-                console.log(e)
                 v.createMessageElem(e.msg, false);
                 v.scrollToBottom()
             })
