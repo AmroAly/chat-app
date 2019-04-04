@@ -1930,11 +1930,13 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     // get the users list
-    Object(_helper_api__WEBPACK_IMPORTED_MODULE_0__["get"])("/api/users").then(function (r) {
-      _this.users = r.data.users;
-    }).catch(function (e) {
-      return console.log(e);
-    });
+    if (this.auth) {
+      Object(_helper_api__WEBPACK_IMPORTED_MODULE_0__["get"])("/api/users").then(function (r) {
+        _this.users = r.data.users;
+      }).catch(function (e) {
+        return console.log(e);
+      });
+    }
   },
   data: function data() {
     return {
@@ -2190,7 +2192,7 @@ __webpack_require__.r(__webpack_exports__);
     var v = this;
     var socket = io.connect('http://localhost:8890');
 
-    if (this.id) {
+    if (this.$route.params.id) {
       Object(_helper_api__WEBPACK_IMPORTED_MODULE_0__["get"])("/api/conversations/".concat(this.id)).then(function (res) {
         _this.messages = res.data.messages;
         _this.conv_id = res.data.conv_id;
@@ -2231,7 +2233,11 @@ __webpack_require__.r(__webpack_exports__);
             conversation_id: this.conv_id,
             text: msg
           }).then(function (res) {
-            v.createMessageElem(res.data.message.text, true);
+            v.messages.push({
+              'text': res.data.message.text,
+              'conversation_id': v.conv_id,
+              'user_id': v.user_id
+            });
             document.getElementById('message-form').reset();
             v.scrollToBottom();
           }).catch(function (err) {
@@ -2282,19 +2288,35 @@ __webpack_require__.r(__webpack_exports__);
       return [];
     }
   },
-  updated: function updated() {// this.messages = []
-    // this.conv_id = null
-    // if(this.id) {
-    //     get(`/api/conversations/${this.id}`)
-    //     .then((res) => {
-    //         this.messages = res.data.messages
-    //         this.conv_id = res.data.conv_id
-    //     })
-    //     .catch(err => console.log(err))
-    // }
-  },
+  updated: function updated() {},
   beforeRouteUpdate: function beforeRouteUpdate(to, from, next) {
-    window.location.reload();
+    var _this2 = this;
+
+    // window.location.reload()
+    var socket = io.connect('http://localhost:8890');
+    var that = this;
+
+    if (to.params.id) {
+      Object(_helper_api__WEBPACK_IMPORTED_MODULE_0__["get"])("/api/conversations/".concat(to.params.id)).then(function (res) {
+        _this2.messages = res.data.messages;
+        _this2.conv_id = res.data.conv_id;
+        socket.emit('add user', {
+          'client': that.user_id,
+          'conversation': _this2.conv_id
+        });
+        that.scrollToBottom();
+      }).catch(function (err) {
+        return console.log(err);
+      });
+    }
+
+    socket.on('message', function (e) {
+      that.messages.push({
+        "text": e.msg,
+        "user_id": e.user_id
+      });
+      that.scrollToBottom();
+    });
     next();
   },
   created: function created() {}

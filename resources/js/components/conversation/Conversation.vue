@@ -27,7 +27,7 @@
         mounted() {
             const v = this
             var socket = io.connect('http://localhost:8890');
-            if(this.id) {
+            if(this.$route.params.id) {
                 get(`/api/conversations/${this.id}`)
                 .then((res) => {
                     this.messages = res.data.messages
@@ -39,7 +39,7 @@
                 })
                 .catch(err => console.log(err))
             }
-
+            
             socket.on('message', function(e) {
                 console.log(e)
                 v.createMessageElem(e.msg, false);
@@ -66,7 +66,11 @@
                             text: msg
                         })
                         .then(res => {
-                            v.createMessageElem(res.data.message.text, true)
+                            v.messages.push({
+                                'text': res.data.message.text,
+                                'conversation_id': v.conv_id,
+                                'user_id': v.user_id
+                            })
                             document.getElementById('message-form').reset()
                             v.scrollToBottom()
                         })
@@ -115,19 +119,27 @@
             }
         },
         updated() {
-            // this.messages = []
-            // this.conv_id = null
-            // if(this.id) {
-            //     get(`/api/conversations/${this.id}`)
-            //     .then((res) => {
-            //         this.messages = res.data.messages
-            //         this.conv_id = res.data.conv_id
-            //     })
-            //     .catch(err => console.log(err))
-            // }
         },
         beforeRouteUpdate(to, from, next) {
-            window.location.reload()
+            // window.location.reload()
+            var socket = io.connect('http://localhost:8890');
+            const that = this
+            if(to.params.id) {
+                
+                get(`/api/conversations/${to.params.id}`)
+                .then((res) => {
+                    this.messages = res.data.messages
+                    this.conv_id = res.data.conv_id
+                    
+                    socket.emit('add user', {'client': that.user_id, 'conversation': this.conv_id});
+                    that.scrollToBottom()
+                })
+                .catch(err => console.log(err))
+            }
+            socket.on('message', function(e) {
+                that.messages.push({ "text": e.msg, "user_id": e.user_id})
+                that.scrollToBottom()
+            })
             next() 
         },
         created() {

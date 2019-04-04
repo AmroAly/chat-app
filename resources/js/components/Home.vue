@@ -29,11 +29,13 @@
     export default {
         mounted() {
             // get the users list
-            get(`/api/users`)
-                .then(r => {
-                    this.users = r.data.users
-                })
-                .catch((e) => console.log(e))
+            if(this.auth) {
+                get(`/api/users`)
+                    .then(r => {
+                        this.users = r.data.users
+                    })
+                    .catch((e) => console.log(e))
+            }
         },
         data() {
             return {

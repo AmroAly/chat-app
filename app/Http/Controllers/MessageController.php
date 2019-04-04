@@ -30,14 +30,15 @@ class MessageController extends Controller
             $data = [
                 'conversation_id' =>$request->conversation_id,
                 'text'=> $request->text,
-                'client_id' => $receiver_id
+                'client_id' => $receiver_id,
+                'user_id' => $request->user()->id
             ];
             $redis = Redis::connection();
             $redis->publish('message', json_encode($data));
             // event(new MessagePushed($data));
 
             return response()->json([
-                "message" => $message
+                "message" => $message 
             ]);
         }
         return response()->json("permission error");
